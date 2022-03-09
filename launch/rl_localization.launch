@@ -1,0 +1,44 @@
+<launch>
+
+	<!-- Launch GPS format converter: gps_common/GPSFix ==>  sensor_msgs/NavSatFix -->
+	<include file="$(find gps_convert)/launch/gps_convert.launch" />
+
+	
+	<!-- Launch the conversion from sensor_msgs/NavSatFix to nav_msgs/Odometry -->
+
+
+	<node name="gps_conv" pkg="gps_common" type="utm_odometry_node"  output="screen" >
+	
+		 <remap from="odom" to="odom_utm"/>
+		 
+		 <param name="rot_covariance" value="99999" />
+		 
+		 <param name="frame_id" value="odom" />
+		 <param name="child_frame_id" value="base_footprint" />
+	 
+	</node> 
+
+
+
+	
+	<node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true" output="screen">
+	
+	      <param name="magnetic_declination_radians" value="0"/>
+	
+	      <param name="roll_offset" value="0"/>
+	
+	      <param name="pitch_offset" value="0"/>
+	
+	      <param name="yaw_offset" value="0"/>
+	
+	      <param name="zero_altitude" value="false"/>
+	
+	      <remap from="imu/data" to="imu_out" />
+	      <remap from="gps/fix" to="fix" />
+	      <remap from="odometry/filtered" to="odom_utm" />
+	      
+	      <param name="child_frame_id" value="base_footprint" />
+	
+	</node>
+
+</launch>

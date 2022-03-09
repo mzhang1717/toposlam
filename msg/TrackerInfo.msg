@@ -1,0 +1,5 @@
+int8 trueNodeID
+int8 matchedNodeID
+geometry_msgs/Pose truePose
+geometry_msgs/Pose matchedNodePose
+geometry_msgs/Pose odometryPose

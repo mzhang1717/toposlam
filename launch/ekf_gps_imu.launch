@@ -1,0 +1,31 @@
+<launch>
+
+<!-- Launch GPS format converter: gps_common/GPSFix ==>  sensor_msgs/NavSatFix -->
+<include file="$(find gps_convert)/launch/gps_convert.launch" />
+
+<!-- Launch the conversion from sensor_msgs/NavSatFix to nav_msgs/Odometry -->
+<node name="gps_conv" pkg="gps_common" type="utm_odometry_node"  output="screen" >
+ <remap from="odom" to="vo"/>
+ <param name="rot_covariance" value="99999" />
+ <param name="frame_id" value="base_link" />
+</node>
+
+<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" output="screen">
+<remap from="gps" to="vo"/>
+<remap from="imu_data" to="imu_out"/>
+<param name="base_footprint_frame" value="world" />
+<param name="output_frame" value="odom_combined" />
+<param name="freq" value="30.0"/>
+<param name="debug" value="false"/>
+<param name="sensor_timeout" value="2.0"/>
+<param name="odom_used" value="false"/>
+<param name="imu_used" value="true"/>
+<param name="vo_used" value="false"/>
+<param name="gps_used" value="true"/>
+<param name="imu_absolute" value="true" />
+</node>
+
+<!-- Create a static transform between "base_link" and "base_footprint" -->
+<node pkg="tf" type="static_transform_publisher" name="base_footprint_base_link" args="0 0 0 0 0 0 world base_link 100"/>
+
+</launch>

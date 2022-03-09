@@ -1,0 +1,27 @@
+<launch>
+
+<!-- Launch GPS format converter: gps_common/GPSFix ==>  sensor_msgs/NavSatFix -->
+<include file="$(find gps_convert)/launch/gps_convert.launch" />
+
+<!-- Launch the conversion from sensor_msgs/NavSatFix to nav_msgs/Odometry -->
+<node name="gps_conv" pkg="gps_common" type="utm_odometry_node"  output="screen" >
+ <remap from="odom" to="vo"/>
+ <param name="rot_covariance" value="99999" />
+ <param name="frame_id" value="base_link" />
+</node>
+
+<!-- Launch the Kalman filter, It requires at least two sensor inputs out of IMU/either GPS or Visual Odometry/Wheel Odometry  -->
+<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf"  output="screen" >
+  <remap from="imu_data" to="x8/output/imu" />  
+  <param name="output_frame" value="odom_combined"/>
+  <param name="freq" value="30.0"/> <!-- Run Kalman filter at 30hz, It worked fine at 50hz on my machine, but I was limited by my IMU which publishes at 50hz -->
+  <param name="sensor_timeout" value="1.0"/>  
+  <param name="odom_used" value="false"/> <!-- If using wheel odometry change to true, Wheel Odometry topic = /odom -->
+  <param name="imu_used" value="true"/>  <!-- IMU topic = /imu_data -->
+  <param name="vo_used" value="true"/>  <!-- GPS topic = /vo -->
+</node>
+
+<!-- Create a static transform between "base_link" and "base_footprint" -->
+<node pkg="tf" type="static_transform_publisher" name="base_footprint_base_link"  output="screen"  args="0 0 0 0 0 0 base_footprint base_link 100"/>
+
+</launch>

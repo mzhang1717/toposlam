@@ -1,0 +1,10 @@
+<launch>
+
+  <arg name="debug" default="false" />
+  <arg name="debug_prefix" value="gdb --args" if="$(arg debug)"/>
+  <arg name="debug_prefix" value="" unless="$(arg debug)"/>
+
+  <node name="toposlam_build" pkg="toposlam" type="toposlam_build" output="screen" launch-prefix="$(arg debug_prefix)" >
+  	<param name="image_transport" type="string" value="compressed"/>
+  </node>
+</launch>

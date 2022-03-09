@@ -1,0 +1,58 @@
+<launch>
+
+  <arg name="debug" default="false" />
+  <arg name="debug_prefix" value="gdb --args" if="$(arg debug)"/>
+  <arg name="debug_prefix" value="" unless="$(arg debug)"/>
+
+  <node name="toposlam_query" pkg="toposlam" type="toposlam_query" output="screen" launch-prefix="$(arg debug_prefix)" >
+
+<!--
+	<remap from="/RefPose" to="/mcptam/tracker_pose_cov"/>  
+-->
+	
+
+	<remap from="/RefPose" to="/robot_pose_ekf/odom_combined"/>   
+
+	  
+<!--
+  	<param name="image_transport" type="string" value="compressed"/>
+  	<rosparam param="camera_name_list">[camera1, camera2, camera3, camera4]</rosparam>
+  	<rosparam param="stereo_name_list">[camera3, camera4]</rosparam>
+  	<param name="image_topic" type="string" value="image_raw"/>
+  	<param name="info_topic" type="string" value="camera_info"/>
+  	<param name="camera_prefix" type="string" value=""/>
+  	<rosparam param="camera_mask_list">{camera1: camera1_mask.jpg, camera2: camera2_mask.jpg, camera3: camera3_mask.jpg, camera4: camera4_mask.jpg}</rosparam>
+  	<param name="masks_dir" type="string" value="$(find toposlam)/masks" />
+-->
+  	 
+
+  	<rosparam param="camera_name_list">[left, right]</rosparam>
+  	<rosparam param="stereo_name_list">[left, right]</rosparam>
+  	<param name="image_topic" type="string" value="image_rect"/>
+  	<param name="info_topic" type="string" value="camera_info"/>
+  	<param name="camera_prefix" type="string" value="/wide_stereo"/>
+
+  	
+  	<param name="voctree_level" type="int" value="6"/>
+  	<param name="voctree_branch" type="int" value="10"/>
+  	<param name="voctree_leafsize" type="int" value="100"/>
+  	
+  	<param name="feature_detector" type="string" value="CENSURE"/>
+  	<param name="feature_descriptor" type="string" value="SIFT"/>
+  	<param name="feature_number" type="int" value="200"/>
+  	<param name="feature_threshold" type="int" value="70"/>
+ 
+<!--
+  	<rosparam command="load" file="$(find toposlam)/masks/topo_masks.yaml" />
+-->
+  	
+
+
+
+  	
+  	<rosparam command="load" file="$(find toposlam)/pose/vision_pose_factory_flight.yaml" />
+
+
+
+  </node>
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+  <node name="toposlam_query" pkg="toposlam" type="toposlam_query" output="screen" launch-prefix="$(arg debug_prefix)" >
+
+  </node>
+</launch>
